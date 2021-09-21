@@ -1,4 +1,8 @@
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ProjectSchool_API.Data;
+using ProjectSchool_API.Models;
 
 namespace ProjectSchool_API.Controllers
 {
@@ -6,38 +10,98 @@ namespace ProjectSchool_API.Controllers
     [ApiController]
     public class StudentController : Controller
     {
-        public StudentController() {
+        public IRepository _repo { get; }
 
-        }   
+        public StudentController(IRepository repo)
+        {
+            _repo = repo;
+        }
 
         [HttpGet]
         public IActionResult Get()
         {
-            return Ok();
+            try
+            {
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return this
+                    .StatusCode(StatusCodes.Status500InternalServerError,
+                    "DB fail");
+                throw;
+            }
         }
 
         [HttpGet("{StudentId}")]
         public IActionResult Get(int StudentId)
         {
-            return Ok();
+            try
+            {
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return this
+                    .StatusCode(StatusCodes.Status500InternalServerError,
+                    "DB fail");
+                throw;
+            }
         }
 
         [HttpPost]
-        public IActionResult Post()
+        public async Task<IActionResult> Post(Student model)
         {
-            return Ok();
+            try
+            {
+                _repo.Add (model);
+
+                if (await _repo.SaveChangesAsync())
+                {
+                    return Created($"/api/student/{model.Id}", model);
+                }
+            }
+            catch (System.Exception)
+            {
+                return this
+                    .StatusCode(StatusCodes.Status500InternalServerError,
+                    "DB fail");
+                throw;
+            }
+
+            return BadRequest();
         }
 
         [HttpPut("{StudentId}")]
         public IActionResult Put(int StudentId)
         {
-            return Ok();
+            try
+            {
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return this
+                    .StatusCode(StatusCodes.Status500InternalServerError,
+                    "DB fail");
+                throw;
+            }
         }
 
         [HttpDelete("{StudentId}")]
         public IActionResult Delete(int StudentId)
         {
-            return Ok();
+            try
+            {
+                return Ok();
+            }
+            catch (System.Exception)
+            {
+                return this
+                    .StatusCode(StatusCodes.Status500InternalServerError,
+                    "DB fail");
+                throw;
+            }
         }
     }
 }

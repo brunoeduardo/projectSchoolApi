@@ -46,6 +46,8 @@ namespace ProjectSchool_API
             //                 .GetConnectionString("MySqlConnection")));
             services.AddControllers();
 
+            services.AddScoped<IRepository, Repository>();
+
             services
                 .AddSwaggerGen(c =>
                 {
