@@ -1,4 +1,3 @@
-
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
 using ProjectSchool_API.Data;
-
 
 namespace ProjectSchool_API
 {
@@ -42,12 +40,19 @@ namespace ProjectSchool_API
             //                 .GetConnectionString("MySqlConnection")));
             services.AddControllers();
 
-            services.AddControllers().AddNewtonsoftJson(
-                     options =>
-                     {
-                         options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                     }
-            );
+            services
+                .AddControllers()
+                .AddNewtonsoftJson(options =>
+                {
+                    options.SerializerSettings.ReferenceLoopHandling =
+                        ReferenceLoopHandling.Ignore;
+                });
+
+            services
+                .AddControllersWithViews(options =>
+                {
+                    options.AllowEmptyInputInBodyModelBinding = true;
+                });
 
             services.AddScoped<IRepository, Repository>();
 
@@ -81,6 +86,10 @@ namespace ProjectSchool_API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app
+                .UseCors(x =>
+                    x.AllowAnyHeader().AllowAnyOrigin().AllowAnyMethod());
 
             app
                 .UseEndpoints(endpoints =>

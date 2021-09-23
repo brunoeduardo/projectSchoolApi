@@ -8,11 +8,11 @@ namespace ProjectSchool_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class StudentController : Controller
+    public class StudentsController : Controller
     {
         public IRepository _repo { get; }
 
-        public StudentController(IRepository repo)
+        public StudentsController(IRepository repo)
         {
             _repo = repo;
         }
@@ -78,7 +78,7 @@ namespace ProjectSchool_API.Controllers
 
                 if (await _repo.SaveChangesAsync())
                 {
-                    return Created($"/api/student/{model.Id}", model);
+                    return Created($"/api/students/{model.Id}", model);
                 }
             }
             catch (System.Exception)
@@ -105,7 +105,7 @@ namespace ProjectSchool_API.Controllers
                 if (await _repo.SaveChangesAsync())
                 {
                     student = await _repo.GetStudentAsyncById(StudentId, true);
-                    return Created($"/api/student/{model.Id}", student);
+                    return Created($"/api/students/{model.Id}", student);
                 }
 
                 return BadRequest();
