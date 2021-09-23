@@ -1,4 +1,5 @@
 using System.Threading.Tasks;
+using ProjectSchool_API.Models;
 
 namespace ProjectSchool_API.Data
 {
@@ -11,5 +12,15 @@ namespace ProjectSchool_API.Data
         void Delete<T>(T entity) where T : class;
 
         Task<bool> SaveChangesAsync();
+
+        Task<Student[]> GetAllStudentsAsync(bool includeTeacher);
+
+        Task<Student[]> GetStudentsAsyncByTeacherId(int TeacherId, bool includeTeacher);
+
+        Task<Student> GetStudentAsyncById(int StudentId, bool includeTeacher);
+
+        Task<Teacher[]> GetAllTeachersAsync(bool includeStudent);
+
+        Task<Teacher> GetTeacherAsyncById(int TeacherId, bool includeStudent);
     }
 }

@@ -18,11 +18,12 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok();
+                var result = await _repo.GetAllTeachersAsync(true);
+                return Ok(result);
             }
             catch (System.Exception)
             {
@@ -34,11 +35,12 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpGet("{TeacherId}")]
-        public IActionResult Get(int TeacherId)
+        public async Task<IActionResult> GetTeacherById(int TeacherId)
         {
             try
             {
-                return Ok();
+                var result = await _repo.GetTeacherAsyncById(TeacherId, true);
+                return Ok(result);
             }
             catch (System.Exception)
             {
@@ -73,11 +75,22 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpPut("{TeacherId}")]
-        public IActionResult Put(int TeacherId)
+        public async Task<IActionResult> Put(int TeacherId, Teacher model)
         {
             try
             {
-                return Ok();
+                var teacher = await _repo.GetTeacherAsyncById(TeacherId, false);
+                if (teacher == null) return NotFound();
+
+                _repo.Update (model);
+
+                if (await _repo.SaveChangesAsync())
+                {
+                    teacher = await _repo.GetTeacherAsyncById(TeacherId, true);
+                    return Created($"/api/teacher/{model.Id}", teacher);
+                }
+
+                return BadRequest();
             }
             catch (System.Exception)
             {
@@ -89,11 +102,21 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpDelete("{TeacherId}")]
-        public IActionResult Delete(int TeacherId)
+        public async Task<IActionResult> Delete(int TeacherId, Teacher model)
         {
             try
             {
-                return Ok();
+                var teacher = await _repo.GetTeacherAsyncById(TeacherId, false);
+                if (teacher == null) return NotFound();
+
+                _repo.Delete (teacher);
+
+                if (await _repo.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+
+                return BadRequest();
             }
             catch (System.Exception)
             {

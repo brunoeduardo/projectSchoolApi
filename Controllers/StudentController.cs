@@ -18,11 +18,12 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get()
+        public async Task<IActionResult> Get()
         {
             try
             {
-                return Ok();
+                var result = await _repo.GetAllStudentsAsync(true);
+                return Ok(result);
             }
             catch (System.Exception)
             {
@@ -34,11 +35,30 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpGet("{StudentId}")]
-        public IActionResult Get(int StudentId)
+        public async Task<IActionResult> GetByStudentId(int StudentId)
         {
             try
             {
-                return Ok();
+                var result = await _repo.GetStudentAsyncById(StudentId, true);
+                return Ok(result);
+            }
+            catch (System.Exception)
+            {
+                return this
+                    .StatusCode(StatusCodes.Status500InternalServerError,
+                    "DB fail");
+                throw;
+            }
+        }
+
+        [HttpGet("Teacher/{TeacherId}")]
+        public async Task<IActionResult> GetStudentByTeacherId(int TeacherId)
+        {
+            try
+            {
+                var result =
+                    await _repo.GetStudentsAsyncByTeacherId(TeacherId, true);
+                return Ok(result);
             }
             catch (System.Exception)
             {
@@ -73,11 +93,22 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpPut("{StudentId}")]
-        public IActionResult Put(int StudentId)
+        public async Task<IActionResult> Put(int StudentId, Student model)
         {
             try
             {
-                return Ok();
+                var student = await _repo.GetStudentAsyncById(StudentId, false);
+                if (student == null) return NotFound();
+
+                _repo.Update (model);
+
+                if (await _repo.SaveChangesAsync())
+                {
+                    student = await _repo.GetStudentAsyncById(StudentId, true);
+                    return Created($"/api/student/{model.Id}", student);
+                }
+
+                return BadRequest();
             }
             catch (System.Exception)
             {
@@ -89,11 +120,21 @@ namespace ProjectSchool_API.Controllers
         }
 
         [HttpDelete("{StudentId}")]
-        public IActionResult Delete(int StudentId)
+        public async Task<IActionResult> Delete(int StudentId, Student model)
         {
             try
             {
-                return Ok();
+                var student = await _repo.GetStudentAsyncById(StudentId, false);
+                if (student == null) return NotFound();
+
+                _repo.Delete (student);
+
+                if (await _repo.SaveChangesAsync())
+                {
+                    return Ok();
+                }
+                
+                return BadRequest();
             }
             catch (System.Exception)
             {
