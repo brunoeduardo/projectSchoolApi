@@ -65,7 +65,7 @@ namespace ProjectSchool_API.Data
                 query
                     .AsNoTracking()
                     .OrderBy(s => s.Id)
-                    .Where(s => s.Id == TeacherId);
+                    .Where(t => t.TeacherId == TeacherId);
 
             return await query.ToArrayAsync();
         }
